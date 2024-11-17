@@ -1,29 +1,42 @@
-import { Switch, Route } from "react-router-dom";
-import { Container, Col, Row } from "react-bootstrap";
+import React from "react";
+import { Container, Nav, Navbar } from "react-bootstrap"; 
+import { Link, Redirect, Route, Switch } from "react-router-dom"; 
+import Cookies from "universal-cookie";
 import Account from "./Account";
-import FreeComponent from "./FreeComponent";
 import AuthComponent from "./AuthComponent";
 import ProtectedRoutes from "./ProtectedRoutes";
 
+// Create an instance of cookies to manage cookie state
+const cookies = new Cookies();
+
 function App() {
+  // Check if the user is logged in by checking if the TOKEN cookie exists
+  const token = cookies.get("TOKEN");
+
   return (
     <Container>
-      <Row>
-        <Col className="text-center">
-          <h1>React Authentication Tutorial</h1>
+      {/* Header with Navbar for better navigation */}
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Navbar.Brand href="/">React Authentication Test</Navbar.Brand>
+          <Nav className="ml-auto">
+            {/* Show the Home link only if user is not logged in */}
+            {!token && <Nav.Link as={Link} to="/">Home</Nav.Link>}
 
-          <section id="navigation">
-            <a href="/">Home</a>
-            <a href="/free">Free Component</a>
-            <a href="/auth">Auth Component</a>
-          </section>
-        </Col>
-      </Row>
+            {/* Always show the Dashboard link if user is logged in */}
+            {token && <Nav.Link as={Link} to="/auth">Dashboard</Nav.Link>}
+          </Nav>
+        </Container>
+      </Navbar>
 
-      {/* create routes here */}
+      {/* Routes */}
       <Switch>
-        <Route exact path="/" component={Account} />
-        <Route exact path="/free" component={FreeComponent} />
+        {/* Home Route: Only show the Account component if not logged in */}
+        <Route exact path="/">
+          {token ? <Redirect to="/auth" /> : <Account />}
+        </Route>
+
+        {/* Protected Route: Show AuthComponent only if logged in */}
         <ProtectedRoutes path="/auth" component={AuthComponent} />
       </Switch>
     </Container>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import baseUrl from "./utils/baseUrl";
 const cookies = new Cookies();
 
 export default function Login() {
@@ -17,7 +18,7 @@ export default function Login() {
     // set configurations
     const configuration = {
       method: "post",
-      url: "https://nodejs-mongodb-auth-app.herokuapp.com/login",
+      url: baseUrl+"login",
       data: {
         email,
         password,

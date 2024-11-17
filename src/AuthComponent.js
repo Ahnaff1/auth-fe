@@ -1,55 +1,74 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
-import axios from "axios";
+import React from "react";
+import { Button, Card, Col, Row } from "react-bootstrap";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
-// get token generated on login
-const token = cookies.get("TOKEN");
 
 export default function AuthComponent() {
-  // set an initial state for the message we will receive after the API call
-  const [message, setMessage] = useState("");
 
-  // useEffect automatically executes once the page is fully loaded
-  useEffect(() => {
-    // set configurations for the API call here
-    const configuration = {
-      method: "get",
-      url: "https://nodejs-mongodb-auth-app.herokuapp.com/auth-endpoint",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+  // Dummy course data
+  const courses = [
+    {
+      id: 1,
+      name: "React for Beginners",
+      image: "https://images.unsplash.com/photo-1593642532973-d31b6557fa68", 
+      duration: "3 hours"
+    },
+    {
+      id: 2,
+      name: "Advanced Node.js",
+      image: "https://images.unsplash.com/photo-1593642532973-d31b6557fa68", 
+      duration: "4 hours"
+    },
+    {
+      id: 3,
+      name: "Python Crash Course",
+      image: "https://images.unsplash.com/photo-1593642532973-d31b6557fa68", 
+      duration: "2.5 hours"
+    },
+    {
+      id: 4,
+      name: "Web Development with HTML & CSS",
+      image: "https://images.unsplash.com/photo-1593642532973-d31b6557fa68", 
+      duration: "5 hours"
+    }
+  ];
+  
 
-    // make the API call
-    axios(configuration)
-      .then((result) => {
-        // assign the message in our result to the message we initialized above
-        setMessage(result.data.message);
-      })
-      .catch((error) => {
-        error = new Error();
-      });
-  }, []);
-
-  // logout
+  // Logout function
   const logout = () => {
-    // destroy the cookie
+    // Destroy the cookie
     cookies.remove("TOKEN", { path: "/" });
-    // redirect user to the landing page
+    // Redirect user to the landing page
     window.location.href = "/";
-  }
+  };
 
   return (
     <div className="text-center">
       <h1>Auth Component</h1>
+      <div className="mt-4">
+        <h2>Available Courses</h2>
+        <Row className="justify-content-center">
+          {/* Loop through courses and display them */}
+          {courses.map((course) => (
+            <Col key={course.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+              <Card style={{ width: "18rem" }}>
+                <Card.Img variant="top" src={course.image} />
+                <Card.Body>
+                  <Card.Title>{course.name}</Card.Title>
+                  <Card.Text>
+                    <strong>Duration:</strong> {course.duration}
+                  </Card.Text>
+                  <Button variant="primary">Enroll</Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
 
-      {/* displaying our message from our API call */}
-      <h3 className="text-danger">{message}</h3>
-
-      {/* logout */}
-      <Button type="submit" variant="danger" onClick={() => logout()}>
+            {/* Logout Button */}
+            <Button type="submit" variant="danger" onClick={() => logout()}>
         Logout
       </Button>
     </div>
